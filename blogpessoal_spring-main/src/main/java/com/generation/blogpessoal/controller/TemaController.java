@@ -54,7 +54,7 @@ public class TemaController {
 		return ResponseEntity.status(HttpStatus.CREATED).body(temaRepository.save(tema));
 	}
 	
-	@PutMapping
+	@PutMapping("/{id}")
 	public ResponseEntity<Tema> put(@Valid @RequestBody Tema tema) {
 	    
 	    if (tema.getId() == null)

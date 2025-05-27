@@ -84,4 +84,8 @@ public class UsuarioController {
 			.map(resposta -> ResponseEntity.status(HttpStatus.OK).body(resposta))
 			.orElse(ResponseEntity.status(HttpStatus.UNAUTHORIZED).build());
 	}
+
+	public TemaRepository getTemaRepository() {
+		return temaRepository;
+	}
 }

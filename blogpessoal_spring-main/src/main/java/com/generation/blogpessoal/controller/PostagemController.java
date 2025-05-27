@@ -58,17 +58,29 @@ public class PostagemController {
 	
 	@PostMapping
 	public ResponseEntity<Postagem> post(@Valid @RequestBody Postagem postagem) {
-		
-		postagemRepository.findById(postagem.getTema().getId())
-		.orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "O tema não existe", null));
-	
-		return ResponseEntity.status(HttpStatus.CREATED).body(postagemRepository.save(postagem));
+
+	    if (postagem.getTema() == null || postagem.getTema().getId() == null) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O tema é obrigatório");
+	    }
+
+	    temaRepository.findById(postagem.getTema().getId())
+	        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST, "O tema não existe"));
+
+	    Postagem novaPostagem = postagemRepository.save(postagem);
+
+	    return ResponseEntity.status(HttpStatus.CREATED).body(novaPostagem);
 	}
+
 	
 	@PutMapping
 	public ResponseEntity<Postagem> put(@Valid @RequestBody Postagem postagem) {
-	    if (postagem.getId() == null || !temaRepository.existsById(postagem.getTema().getId()))
-	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O Tema não existe!", null);
+	    if (postagem.getId() == null) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O ID da postagem é obrigatório");
+	    }
+
+	    if (postagem.getTema() == null || postagem.getTema().getId() == null || !temaRepository.existsById(postagem.getTema().getId())) {
+	        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O Tema não existe!");
+	    }
 
 	    return postagemRepository.findById(postagem.getId())
 	        .map(p -> ResponseEntity.ok(postagemRepository.save(postagem)))
